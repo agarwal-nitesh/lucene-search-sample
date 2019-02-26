@@ -1,5 +1,7 @@
 package com.nitesh.newsearch;
 
+import com.nitesh.indexer.SimpleHotelsIndexer;
+
 public class NewSearchApp {
     public static void main(String args[]) {
         System.out.println("New Search");

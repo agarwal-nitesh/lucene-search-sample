@@ -1,4 +1,4 @@
-package com.nitesh.newsearch;
+package com.nitesh.indexer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

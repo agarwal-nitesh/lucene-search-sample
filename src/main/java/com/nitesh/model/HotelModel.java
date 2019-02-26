@@ -1,7 +1,7 @@
 package com.nitesh.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nitesh.newsearch.LuceneDocumentField;
+import com.nitesh.indexer.LuceneDocumentField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

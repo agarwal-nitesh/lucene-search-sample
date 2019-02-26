@@ -1,4 +1,4 @@
-package com.nitesh.newsearch;
+package com.nitesh.indexer;
 
 import org.apache.lucene.document.*;
 

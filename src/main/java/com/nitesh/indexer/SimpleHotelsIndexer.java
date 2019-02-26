@@ -1,4 +1,4 @@
-package com.nitesh.newsearch;
+package com.nitesh.indexer;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
