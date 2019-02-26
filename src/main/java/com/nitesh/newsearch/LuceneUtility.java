@@ -21,20 +21,29 @@ public class LuceneUtility {
                         if (field != null) {
                             if (field.getType().equals(String.class)) {
                                 Object fieldValue = field.get(object);
-                                if (fieldValue == null) {
-                                    fieldValue = "";
-                                }
-                                TextField textField = new TextField(annotationValue, fieldValue.toString(), Field.Store.YES);
-                                document.add(textField);
-                            } else if (field.getType().equals(int.class)) {
-                                Integer fieldValue = (Integer) field.get(object);
                                 if (fieldValue != null) {
-                                    NumericDocValuesField numericDocValuesField = new NumericDocValuesField(annotationValue, fieldValue);
+                                    TextField textField = new TextField(annotationValue, fieldValue.toString(), Field.Store.YES);
+                                    document.add(textField);
+                                }
+                            } else if (field.getType().equals(int.class)) {
+                                Object fieldValueObj = field.get(object);
+                                if (fieldValueObj != null) {
+                                    String fieldValueStr = fieldValueObj.toString();
+                                    fieldValueStr = fieldValueStr.replaceAll(",", "");
+                                    Integer fieldValue = null;
+                                    try {
+                                        fieldValue = Integer.parseInt(fieldValueStr);
+                                        NumericDocValuesField numericDocValuesField = new NumericDocValuesField(annotationValue, fieldValue);
+                                        document.add(numericDocValuesField);
+                                    } catch (Exception e) {
+                                        System.out.println("Unable to parse string to int: " + e.getMessage());
+                                    }
                                 }
                             } else if (field.getType().equals(double.class)) {
                                 Double fieldValue = (Double) field.get(object);
                                 if (fieldValue != null) {
                                     DoubleDocValuesField doubleDocValuesField = new DoubleDocValuesField(annotationValue, fieldValue);
+                                    document.add(doubleDocValuesField);
                                 }
                             } else {
                                 throw new Exception("Expected field type String, int or double. Unrecognized type : " + field.getType().toString());

@@ -71,7 +71,7 @@ public class HotelModel {
 
     @JsonProperty("property_type")
     @LuceneDocumentField("property_type")
-    public int PropertyType;
+    public String PropertyType;
 
     @JsonProperty("province")
     @LuceneDocumentField("province")
@@ -94,7 +94,7 @@ public class HotelModel {
 
     @JsonProperty("site_review_count")
     @LuceneDocumentField("site_review_count")
-    public int siteReviewCount;
+    public String siteReviewCount;
 
     @JsonProperty("site_review_rating")
     @LuceneDocumentField("site_review_rating")

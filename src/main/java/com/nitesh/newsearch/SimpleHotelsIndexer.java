@@ -15,7 +15,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class SimpleHotelsIndexer {
@@ -37,21 +36,22 @@ public class SimpleHotelsIndexer {
         OpenCSVReader reader = new OpenCSVReader(',');
         reader.open(fileName);
         String[] columnHeader = reader.getHeader();
-        for (int c=1; c < 10; c++) {
-            String[] columns = reader.next();
+        Integer numberOfDocuments = 0;
+        String[] columns = reader.next();
+        while (columns != null) {
             int columnNumber = 0;
             HashMap<String, Object> map = new HashMap<String, Object>();
             for (String column : columns) {
                 map.put(columnHeader[columnNumber], column);
                 columnNumber += 1;
             }
-            System.out.println("Hotel Map -------------------");
-            System.out.println(Collections.singletonList(map));
-            System.out.println("-----------------------------");
             HotelModel hotel = this.mapper.convertValue(map, HotelModel.class);
             Document document = LuceneUtility.getDocument(hotel);
             this.indexDocument(document);
+            columns = reader.next();
+            numberOfDocuments += 1;
         }
+        System.out.println("Number of documents indexed : " + numberOfDocuments.toString());
         this.closeIndexWriter();
     }
 
