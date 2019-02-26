@@ -1,8 +1,6 @@
 package com.nitesh.newsearch;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 
 public class LuceneUtility {
 
@@ -20,17 +18,28 @@ public class LuceneUtility {
                     if (annotationValue.isEmpty()) {
                         throw new Exception("Empty Field: " + field.getName());
                     } else {
-                        if (field.getType().equals(String.class) || field.getType().equals(int.class) || field.getType().equals(double.class)) {
-                            if (field != null) {
+                        if (field != null) {
+                            if (field.getType().equals(String.class)) {
                                 Object fieldValue = field.get(object);
                                 if (fieldValue == null) {
                                     fieldValue = "";
                                 }
                                 TextField textField = new TextField(annotationValue, fieldValue.toString(), Field.Store.YES);
                                 document.add(textField);
+                            } else if (field.getType().equals(int.class)) {
+                                Integer fieldValue = (Integer) field.get(object);
+                                if (fieldValue != null) {
+                                    NumericDocValuesField numericDocValuesField = new NumericDocValuesField(annotationValue, fieldValue);
+                                }
+                            } else if (field.getType().equals(double.class)) {
+                                Double fieldValue = (Double) field.get(object);
+                                if (fieldValue != null) {
+                                    DoubleDocValuesField doubleDocValuesField = new DoubleDocValuesField(annotationValue, fieldValue);
+                                }
+                            } else {
+                                throw new Exception("Expected field type String, int or double. Unrecognized type : " + field.getType().toString());
                             }
-                        } else {
-                            throw new Exception("Expected field type String, int or double. Unrecognized type : " + field.getType().toString());
+
                         }
                     }
                 }
