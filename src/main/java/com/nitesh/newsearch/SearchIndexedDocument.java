@@ -7,6 +7,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -31,6 +32,11 @@ public class SearchIndexedDocument {
 
     public TopDocs search(String searchQuery) throws Exception {
         this.query = this.queryParser.parse(searchQuery);
+        TopDocs docs = this.indexSearcher.search(this.query, 10);
+        for (ScoreDoc scoreDoc : docs.scoreDocs) {
+            Document doc = this.indexSearcher.doc(scoreDoc.doc);
+            System.out.println(doc);
+        }
         return this.indexSearcher.search(this.query, 10);
     }
 
