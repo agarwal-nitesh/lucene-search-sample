@@ -3,6 +3,7 @@ package com.nitesh.indexer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nitesh.csvparser.OpenCSVReader;
+import com.nitesh.luceneutility.LuceneUtility;
 import com.nitesh.model.HotelModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +47,7 @@ public class SimpleHotelsIndexer {
                 columnNumber += 1;
             }
             HotelModel hotel = this.mapper.convertValue(map, HotelModel.class);
+            hotel.setLatLon();
             Document document = LuceneUtility.getDocument(hotel);
             this.indexDocument(document);
             columns = reader.next();

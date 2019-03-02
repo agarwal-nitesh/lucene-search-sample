@@ -1,4 +1,4 @@
-package com.nitesh.indexer;
+package com.nitesh.luceneutility;
 
 import org.apache.lucene.document.*;
 
@@ -14,18 +14,18 @@ public class LuceneUtility {
             for (java.lang.reflect.Field field: objectClass.getDeclaredFields()) {
                 field.setAccessible(true);
                 if (field.isAnnotationPresent(LuceneDocumentField.class)) {
-                    String annotationValue = field.getAnnotation(LuceneDocumentField.class).value();
-                    if (annotationValue.isEmpty()) {
+                    LuceneDocumentField annotation = field.getAnnotation(LuceneDocumentField.class);
+                    if (annotation.value().isEmpty()) {
                         throw new Exception("Empty Field: " + field.getName());
                     } else {
                         if (field != null) {
-                            if (field.getType().equals(String.class)) {
+                            if (annotation.type().equals(LuceneDocumentFieldType.StringField)) {
                                 Object fieldValue = field.get(object);
                                 if (fieldValue != null) {
-                                    TextField textField = new TextField(annotationValue, fieldValue.toString(), Field.Store.YES);
+                                    TextField textField = new TextField(annotation.value(), fieldValue.toString(), Field.Store.YES);
                                     document.add(textField);
                                 }
-                            } else if (field.getType().equals(int.class)) {
+                            } else if (annotation.type().equals(LuceneDocumentFieldType.IntegerField)) {
                                 Object fieldValueObj = field.get(object);
                                 if (fieldValueObj != null) {
                                     String fieldValueStr = fieldValueObj.toString();
@@ -33,17 +33,23 @@ public class LuceneUtility {
                                     Integer fieldValue = null;
                                     try {
                                         fieldValue = Integer.parseInt(fieldValueStr);
-                                        NumericDocValuesField numericDocValuesField = new NumericDocValuesField(annotationValue, fieldValue);
+                                        NumericDocValuesField numericDocValuesField = new NumericDocValuesField(annotation.value(), fieldValue);
                                         document.add(numericDocValuesField);
                                     } catch (Exception e) {
                                         System.out.println("Unable to parse string to int: " + e.getMessage());
                                     }
                                 }
-                            } else if (field.getType().equals(double.class)) {
+                            } else if (annotation.type().equals(LuceneDocumentFieldType.DoubleField)) {
                                 Double fieldValue = (Double) field.get(object);
                                 if (fieldValue != null) {
-                                    DoubleDocValuesField doubleDocValuesField = new DoubleDocValuesField(annotationValue, fieldValue);
+                                    DoubleDocValuesField doubleDocValuesField = new DoubleDocValuesField(annotation.value(), fieldValue);
                                     document.add(doubleDocValuesField);
+                                }
+                            } else if (annotation.type().equals(LuceneDocumentFieldType.LatLonField)) {
+                                Double[] fieldValues = (Double[]) field.get(object);
+                                if (fieldValues != null && fieldValues.length == 2) {
+                                    LatLonDocValuesField latLonDocValuesField = new LatLonDocValuesField(annotation.value(), fieldValues[0], fieldValues[1]);
+                                    document.add(latLonDocValuesField);
                                 }
                             } else {
                                 throw new Exception("Expected field type String, int or double. Unrecognized type : " + field.getType().toString());

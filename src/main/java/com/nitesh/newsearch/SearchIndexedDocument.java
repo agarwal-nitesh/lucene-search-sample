@@ -35,7 +35,7 @@ public class SearchIndexedDocument {
         TopDocs docs = this.indexSearcher.search(this.query, 10);
         for (ScoreDoc scoreDoc : docs.scoreDocs) {
             Document doc = this.indexSearcher.doc(scoreDoc.doc);
-            System.out.println(doc);
+            System.out.println(doc.getField("address"));
         }
         return this.indexSearcher.search(this.query, 10);
     }
