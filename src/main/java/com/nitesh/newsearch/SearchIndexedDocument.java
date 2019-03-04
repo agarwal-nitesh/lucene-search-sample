@@ -2,6 +2,7 @@ package com.nitesh.newsearch;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.LatLonPoint;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -12,7 +13,6 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Scanner;
 
 public class SearchIndexedDocument {
@@ -39,20 +39,48 @@ public class SearchIndexedDocument {
         return docs;
     }
 
+    public TopDocs searchDistantLocation(String searchField, Double lat, Double lon, Double distance) throws Exception {
+        Query query = LatLonPoint.newDistanceQuery(searchField, lat, lon, distance);
+        TopDocs docs = this.indexSearcher.search(query, 100);
+        System.out.println("Total hits: " + docs.totalHits);
+        for (ScoreDoc scoreDoc : docs.scoreDocs) {
+            Document doc = this.indexSearcher.doc(scoreDoc.doc);
+            System.out.println(doc);
+        }
+        return docs;
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        while (true) {
-            try {
-                System.out.println("Enter field");
-                String field = scanner.nextLine();
-                System.out.println("Enter query string");
-                String query = scanner.nextLine();
-                SearchIndexedDocument searchIndexedDocument = new SearchIndexedDocument("lucene-index");
-                searchIndexedDocument.search(field, query);
-
-            } catch (Exception e) {
-                System.out.println("Some exception occurred while searching index: " + e.getMessage());
+        try {
+            SearchIndexedDocument searchIndexedDocument = new SearchIndexedDocument("lucene-index");
+            while (true) {
+                System.out.println("Enter command");
+                String command = scanner.nextLine();
+                switch (command) {
+                    case "simple-search":
+                        System.out.println("Enter field");
+                        String field = scanner.nextLine();
+                        System.out.println("Enter query string");
+                        String query = scanner.nextLine();
+                        searchIndexedDocument.search(field, query);
+                        break;
+                    case "location-search":
+                        System.out.println("Enter field");
+                        String locationField = scanner.nextLine();
+                        System.out.println("Enter latitude");
+                        String lat = scanner.nextLine();
+                        System.out.println("Enter longitude");
+                        String lon = scanner.nextLine();
+                        Double latitude = Double.parseDouble(lat);
+                        Double longitude = Double.parseDouble(lon);
+                        searchIndexedDocument.searchDistantLocation(locationField, latitude, longitude, 10000.0);
+                        break;
+                }
             }
+
+        } catch (Exception e) {
+            System.out.println("Some exception occurred while searching index: " + e.getMessage());
         }
     }
 

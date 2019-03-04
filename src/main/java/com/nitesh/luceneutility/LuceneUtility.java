@@ -46,10 +46,10 @@ public class LuceneUtility {
                                     document.add(doubleDocValuesField);
                                 }
                             } else if (annotation.type().equals(LuceneDocumentFieldType.LatLonField)) {
-                                Double[] fieldValues = (Double[]) field.get(object);
+                                double[] fieldValues = (double[]) field.get(object);
                                 if (fieldValues != null && fieldValues.length == 2) {
-                                    LatLonDocValuesField latLonDocValuesField = new LatLonDocValuesField(annotation.value(), fieldValues[0], fieldValues[1]);
-                                    document.add(latLonDocValuesField);
+                                    LatLonPoint latLonPoint = new LatLonPoint(annotation.value(), fieldValues[0], fieldValues[1]);
+                                    document.add(latLonPoint);
                                 }
                             } else {
                                 throw new Exception("Expected field type String, int or double. Unrecognized type : " + field.getType().toString());
